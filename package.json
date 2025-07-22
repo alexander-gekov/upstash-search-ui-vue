@@ -1,6 +1,6 @@
 {
   "name": "upstash-search-ui-vue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Upstash Search UI Vue",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
