@@ -16,11 +16,11 @@ export {
   SearchBarDialogTrigger,
   SearchBarDialogContent,
   SearchBarInput,
-  SearchBarResults,
   SearchBarResult,
-  SearchBarResultIcon,
-  SearchBarResultContent,
   SearchBarResultTitle,
+  SearchBarResultContent,
+  SearchBarSeparator,
+  SearchBarResults,
 } from "./components/search-bar";
 export {
   Command,

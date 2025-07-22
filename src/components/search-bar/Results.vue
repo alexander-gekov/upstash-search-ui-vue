@@ -1,63 +1,101 @@
 <script setup lang="ts" generic="T extends { id: string }">
-import { CommandList, CommandEmpty } from "../../ui/command";
-import { ref, watch } from "vue";
+import { ref, VNode, watch } from "vue";
+import { useSearch } from "../../composables/useSearch";
+import List from "./List.vue";
+import Item from "./Item.vue";
+import ItemContent from "./ItemContent.vue";
 
 export interface ResultsProps<T> {
+  children: (result: T) => VNode;
   searchFn: (query: string) => Promise<T[]>;
-  query: string;
+  debounceMs?: number;
 }
 
 const props = defineProps<ResultsProps<T>>();
 
-const loading = ref(false);
 const results = ref<T[]>([]);
+const isLoading = ref(false);
+const { debouncedQuery, immediateQuery } = useSearch();
+const currentQueryRef = ref<string>("");
+
+const search = async ({ query }: { query: string }) => {
+  if (query.trim() && props.searchFn) {
+    currentQueryRef.value = query;
+    isLoading.value = true;
+    try {
+      const searchResults = await props.searchFn(query);
+      if (currentQueryRef.value === query) {
+        results.value = Array.isArray(searchResults) ? searchResults : [];
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      if (currentQueryRef.value === query) {
+        results.value = [];
+      }
+    } finally {
+      if (currentQueryRef.value === query) {
+        isLoading.value = false;
+      }
+    }
+  } else {
+    currentQueryRef.value = "";
+    results.value = [];
+    isLoading.value = false;
+  }
+};
 
 watch(
-  () => props.query,
-  async (val) => {
-    if (!val.trim()) {
+  immediateQuery,
+  () => {
+    if (!Boolean(immediateQuery.value?.trim())) {
+      currentQueryRef.value = "";
       results.value = [];
+      isLoading.value = false;
       return;
     }
+  },
+  { immediate: true }
+);
 
-    loading.value = true;
-    try {
-      const res = await props.searchFn(val);
-      results.value = Array.isArray(res) ? res : [];
-    } catch (e) {
+watch(
+  debouncedQuery,
+  () => {
+    if (debouncedQuery !== undefined && debouncedQuery.value.trim()) {
+      search({ query: debouncedQuery.value });
+    } else {
+      currentQueryRef.value = "";
       results.value = [];
-    } finally {
-      loading.value = false;
+      isLoading.value = false;
     }
-  }
+  },
+  { immediate: true }
 );
 </script>
 
 <template>
-  <CommandList>
-    <CommandEmpty v-if="!loading && results.length === 0">
-      No results found.
-    </CommandEmpty>
-
-    <div v-if="loading" class="space-y-2 p-2">
+  <List v-if="isLoading" v-bind="$attrs">
+    <div
+      v-for="i in 3"
+      :key="i"
+      class="relative flex cursor-default items-center gap-3 rounded-xl p-3 text-sm outline-hidden select-none">
       <div
-        v-for="i in 5"
-        :key="i"
-        class="flex items-center space-x-4 rounded-md px-2 py-3">
-        <div class="h-7 w-7 animate-pulse rounded-md bg-gray-100" />
-        <div class="space-y-2">
-          <div class="h-4 w-[100px] animate-pulse rounded-md bg-gray-100" />
-          <div class="h-3 w-[200px] animate-pulse rounded-md bg-gray-100" />
-        </div>
+        class="flex items-center justify-center size-10 rounded-lg border border-gray-200 bg-gray-100 shrink-0 animate-pulse" />
+      <div class="flex flex-col flex-1 min-w-0">
+        <div
+          class="h-4 bg-gray-200 rounded animate-pulse mb-1.5"
+          :style="{ width: `${60 + Math.random() * 30}%` }" />
+        <div class="h-3 bg-gray-200 rounded animate-pulse w-1/3" />
       </div>
     </div>
-
-    <div v-if="!loading && results.length > 0">
-      <slot
-        name="default"
-        v-for="result in results"
-        :key="result.id"
-        :result="result" />
-    </div>
-  </CommandList>
+  </List>
+  <List v-else-if="!isLoading && results.length === 0" v-bind="$attrs">
+    <div class="text-sm text-gray-500">No results found.</div>
+  </List>
+  <List v-else v-bind="$attrs">
+    <Item v-for="result in results" :key="result.id" :value="result.id">
+      <ItemContent>
+        <slot :result="result" />
+      </ItemContent>
+    </Item>
+  </List>
 </template>

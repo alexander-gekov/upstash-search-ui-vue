@@ -1,37 +1,57 @@
 <script setup lang="ts">
-import { CommandInput } from "../../ui/command";
+import { useTemplateRef } from "vue";
+import CommandInput from "../../ui/command/CommandInput.vue";
+import { useSearch } from "../../composables/useSearch";
+import { cn } from "../../utils";
 
-export interface InputProps {
-  placeholder?: string;
-  modelValue: string;
-}
+defineProps<{
+  className?: string;
+}>();
 
-export interface InputEmits {
-  (e: "update:modelValue", value: string): void;
-}
+const inputRef = useTemplateRef<HTMLInputElement>("inputRef");
 
-defineProps<InputProps>();
-const emit = defineEmits<InputEmits>();
+const { immediateQuery } = useSearch();
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === "Enter") {
+    immediateQuery.value = "";
+  }
+};
 </script>
 
 <template>
-  <div class="relative">
-    <div class="absolute inset-y-0 left-4 flex items-center justify-center">
+  <div className="relative">
+    <div className="absolute inset-y-0 left-4 flex items-center justify-center">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="size-5 shrink-0 opacity-50"
-        fill="none"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
+        fill="none"
         stroke="currentColor"
-        stroke-width="2">
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="size-5 shrink-0 opacity-50"
+        aria-hidden="true">
         <path d="m21 21-4.34-4.34" />
         <circle cx="11" cy="11" r="8" />
       </svg>
     </div>
     <CommandInput
-      :model-value="modelValue"
-      @update:model-value="(value: string) => emit('update:modelValue', value)"
-      :placeholder="placeholder"
-      class="placeholder:text-gray-400 border border-gray-800 ring-2 ring-transparent border-opacity-50 bg-clip-padding shadow focus:ring-emerald-500 pl-12 flex h-12 w-full rounded-lg py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50" />
+      ref="inputRef"
+      :model-value="immediateQuery"
+      @update:model-value="immediateQuery = $event"
+      @keydown="handleKeyDown"
+      :class="
+        cn(
+          'placeholder:text-gray-400 border border-gray-800 ring-2 ring-transparent border-opacity-50 bg-clip-padding shadow focus:ring-emerald-500 pl-12 flex h-12 w-full rounded-lg py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
+          className
+        )
+      "
+      aria-label="Search"
+      aria-describedby="search-help"
+      v-bind="$attrs"
+      autoFocus />
   </div>
 </template>
