@@ -8,18 +8,12 @@ import ResultIcon from "./ResultIcon.vue";
 import ResultContent from "./ResultContent.vue";
 import ResultTitle from "./ResultTitle.vue";
 
-export const SearchBar = {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  Input,
-  Results,
-  Result: Item,
-  ResultIcon,
-  ResultContent,
-  ResultTitle,
-} as const;
-
-export type SearchBarNamespace = typeof SearchBar;
-
-export default SearchBar;
+export const SearchBarDialog = Dialog;
+export const SearchBarDialogTrigger = DialogTrigger;
+export const SearchBarDialogContent = DialogContent;
+export const SearchBarInput = Input;
+export const SearchBarResults = Results;
+export const SearchBarResult = Item;
+export const SearchBarResultIcon = ResultIcon;
+export const SearchBarResultContent = ResultContent;
+export const SearchBarResultTitle = ResultTitle;

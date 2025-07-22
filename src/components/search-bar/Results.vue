@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends { id: string }">
 import { CommandList, CommandEmpty } from "../../ui/command";
 import { ref, watch } from "vue";
 
@@ -34,32 +34,30 @@ watch(
 </script>
 
 <template>
-  <CommandList
-    class="outline-none border-none max-h-[300px] mt-5 scroll-py-5 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb:hover]:bg-gray-300">
-    <template v-if="loading">
+  <CommandList>
+    <CommandEmpty v-if="!loading && results.length === 0">
+      No results found.
+    </CommandEmpty>
+
+    <div v-if="loading" class="space-y-2 p-2">
       <div
-        v-for="n in 3"
-        :key="n"
-        class="relative flex cursor-default items-center gap-3 rounded-xl p-3 text-sm outline-hidden select-none">
-        <div
-          class="flex items-center justify-center size-10 rounded-lg border border-gray-200 bg-gray-100 shrink-0 animate-pulse" />
-        <div class="flex flex-col flex-1 min-w-0">
-          <div
-            class="h-4 bg-gray-200 rounded animate-pulse mb-1.5"
-            :style="{ width: `${60 + Math.random() * 30}%` }" />
-          <div class="h-3 bg-gray-200 rounded animate-pulse w-1/3" />
+        v-for="i in 5"
+        :key="i"
+        class="flex items-center space-x-4 rounded-md px-2 py-3">
+        <div class="h-7 w-7 animate-pulse rounded-md bg-gray-100" />
+        <div class="space-y-2">
+          <div class="h-4 w-[100px] animate-pulse rounded-md bg-gray-100" />
+          <div class="h-3 w-[200px] animate-pulse rounded-md bg-gray-100" />
         </div>
       </div>
-    </template>
+    </div>
 
-    <template v-else-if="results.length === 0">
-      <CommandEmpty class="py-6 text-center text-sm"
-        >No results found</CommandEmpty
-      >
-    </template>
-
-    <template v-else>
-      <slot :results="results" />
-    </template>
+    <div v-if="!loading && results.length > 0">
+      <slot
+        name="default"
+        v-for="result in results"
+        :key="result.id"
+        :result="result" />
+    </div>
   </CommandList>
 </template>

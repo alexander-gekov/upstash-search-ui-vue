@@ -21,8 +21,18 @@ npm install upstash-search-ui-vue
 ```
 
 ```typescript
-// 👇 import package and optimized styles
-import { SearchBar } from "upstash-search-ui-vue";
+// 👇 import components and optimized styles
+import {
+  SearchBarDialog,
+  SearchBarDialogTrigger,
+  SearchBarDialogContent,
+  SearchBarInput,
+  SearchBarResults,
+  SearchBarResult,
+  SearchBarResultIcon,
+  SearchBarResultContent,
+  SearchBarResultTitle,
+} from "upstash-search-ui-vue";
 import "upstash-search-ui-vue/dist/index.css";
 ```
 
@@ -40,9 +50,19 @@ Creating a search database takes less than a minute: [get started here](https://
 npm install @upstash/search
 ```
 
-```vue
+````vue
 <script setup lang="ts">
-import { SearchBar } from "upstash-search-ui-vue";
+import {
+  SearchBarDialog,
+  SearchBarDialogTrigger,
+  SearchBarDialogContent,
+  SearchBarInput,
+  SearchBarResults,
+  SearchBarResult,
+  SearchBarResultIcon,
+  SearchBarResultContent,
+  SearchBarResultTitle,
+} from "upstash-search-ui-vue";
 import "upstash-search-ui-vue/dist/index.css";
 
 import { Search } from "@upstash/search";
@@ -58,80 +78,39 @@ const index = client.index<{ title: string }>("movies");
 </script>
 
 <template>
-  <div class="max-w-sm mt-24 mx-auto">
-    <SearchBarDialog>
-      <SearchBarDialogTrigger placeholder="Search movies..." />
-      <SearchBarDialogContent>
-        <SearchBarInput placeholder="Type to search movies..." />
-        <SearchBarResults
-          :searchFn="
-            (query) => {
-              // 👇 100% type-safe: whatever you return here is
-              // automatically typed as `result` below
-              return index.search({ query, limit: 10, reranking: true });
-            }
-          ">
-          <template #result="{ result }">
-            <SearchBarResult :value="result.id" :key="result.id">
-              <SearchBarResultIcon>
-                <FileText className="text-gray-600" />
-              </SearchBarResultIcon>
+  <SearchBarDialog>
+    <SearchBarDialogTrigger>
+      <SearchBarInput placeholder="Type to search movies..." />
+    </SearchBarDialogTrigger>
 
-              <SearchBarResultContent>
-                <SearchBarResultTitle>
-                  {{ result.content.title }}
-                </SearchBarResultTitle>
-                <p class="text-xs text-gray-500 mt-0.5">Movie</p>
-              </SearchBarResultContent>
-            </SearchBarResult>
-          </template>
-        </SearchBarResults>
-      </SearchBarDialogContent>
-    </SearchBarDialog>
-  </div>
+    <SearchBarDialogContent>
+      <SearchBarResults
+        :searchFn="
+          (query) => index.search({ query, limit: 10, reranking: true })
+        ">
+        <template #default="{ result }">
+          <SearchBarResult :value="result.id">
+            <SearchBarResultIcon>
+              <FileText class="text-gray-600" />
+            </SearchBarResultIcon>
+
+            <SearchBarResultContent>
+              <SearchBarResultTitle>
+                {{ result.content.title }}
+              </SearchBarResultTitle>
+              <p class="text-xs text-gray-500 mt-0.5">Movie</p>
+            </SearchBarResultContent>
+          </SearchBarResult>
+        </template>
+      </SearchBarResults>
+    </SearchBarDialogContent>
+  </SearchBarDialog>
 </template>
-```
 
----
-
-## Using a Readonly Token (recommended)
-
-The token used in the `Search` client above is a read-only token.
-
-<Frame><img src='/img/search/readonly_token.png' /></Frame>
-
-This token is safe to expose on the frontend. This allows your application to perform search queries without the need for a backend API.
-
-To use environment variables for the token, set it as `NEXT_PUBLIC_YOUR_READONLY_TOKEN` in your `.env` file.
-
-Optionally, you can also create a separate backend API to handle search on the server.
-
----
-
-## Handling Results
-
-You can perform actions with the search results by using the `onSelect` prop on `SearchBar.Item`:
-
-```vue
-<SearchBarResult
-  :onSelect="() => {
-    // 👇 do something with result
-    console.log(result)
-  }"
-  :value="result.id"
-  :key="result.id"
->
-```
-
----
-
-## Customization
-
-This component is beautifully pre-styled, but 100% customizable. You can change every piece of it yourself by passing normal props to each component (such as `class`).
-
-**For example**: If you wanted to change the primary color, change the CSS classes:
-
-```vue
+## Customization This component is beautifully pre-styled, but 100%
+customizable. You can change every piece of it yourself by passing normal props
+to each component (such as `class`). **For example**: If you wanted to change
+the primary color, change the CSS classes: ```vue
 <SearchBarInput
   class="focus:ring-red-500"
   placeholder="Type to search movies..." />
@@ -141,7 +120,7 @@ This component is beautifully pre-styled, but 100% customizable. You can change 
   highlightClass="decoration-red-500 text-red-500">
   {{ result.content.title }}
 </SearchBarResultTitle>
-```
+````
 
 ---
 
