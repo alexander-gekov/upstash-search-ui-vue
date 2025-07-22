@@ -1,0 +1,57 @@
+{
+  "name": "upstash-search-ui-vue",
+  "version": "0.1.0",
+  "description": "Upstash Search UI Vue",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./dist/index.css": "./dist/index.css"
+  },
+  "scripts": {
+    "build:types": "vue-tsc --declaration --emitDeclarationOnly",
+    "build:js": "vite build",
+    "build:css": "tailwindcss -i ./src/index.css -o ./dist/index.css --minify",
+    "build": "npm run build:types && npm run build:js && npm run build:css"
+  },
+  "keywords": [
+    "vue",
+    "components",
+    "ui",
+    "search",
+    "typescript"
+  ],
+  "access": "public",
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue": "^3.5.17"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/tsconfig": "^0.7.0",
+    "autoprefixer": "^10.4.21",
+    "lucide-vue-next": "^0.525.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "3.4.13",
+    "typescript": "~5.8.3",
+    "vite": "^5.4.19",
+    "vue-tsc": "^2.2.12"
+  },
+  "dependencies": {
+    "@iconify/vue": "^5.0.0",
+    "@vueuse/core": "^12.0.0",
+    "clsx": "^2.1.1",
+    "reka-ui": "2.3.2",
+    "tailwind-merge": "^3.3.1"
+  }
+}
