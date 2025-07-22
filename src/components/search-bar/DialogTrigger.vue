@@ -8,7 +8,7 @@ export interface DialogTriggerEmits {
   (e: "update:open", value: boolean): void;
 }
 
-const props = defineProps<DialogTriggerProps>();
+defineProps<DialogTriggerProps>();
 const emit = defineEmits<DialogTriggerEmits>();
 </script>
 

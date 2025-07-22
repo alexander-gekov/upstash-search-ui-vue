@@ -10,7 +10,7 @@ export interface InputEmits {
   (e: "update:modelValue", value: string): void;
 }
 
-const props = defineProps<InputProps>();
+defineProps<InputProps>();
 const emit = defineEmits<InputEmits>();
 </script>
 

@@ -9,7 +9,7 @@ export interface DialogEmits {
   (e: "update:open", value: boolean): void;
 }
 
-const props = defineProps<DialogProps>();
+defineProps<DialogProps>();
 const emit = defineEmits<DialogEmits>();
 </script>
 

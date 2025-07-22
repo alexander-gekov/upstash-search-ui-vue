@@ -1,7 +1,6 @@
 <script setup lang="ts" generic="T">
 import { CommandList, CommandEmpty } from "../../ui/command";
 import { ref, watch } from "vue";
-import { useSearch } from "../../composables/useSearch";
 
 export interface ResultsProps<T> {
   searchFn: (query: string) => Promise<T[]>;
@@ -12,8 +11,6 @@ const props = defineProps<ResultsProps<T>>();
 
 const loading = ref(false);
 const results = ref<T[]>([]);
-
-const { debouncedQuery } = useSearch();
 
 watch(
   () => props.query,
