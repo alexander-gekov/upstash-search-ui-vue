@@ -17,6 +17,7 @@ export type searchFnType<T> = (query: string) => OptionalPromise<T[]>;
 export interface SearchResultsProps<T> extends CommandListProps {
   class?: HTMLAttributes["class"];
   searchFn?: searchFnType<T>;
+  debounceMs?: number;
 }
 
 const props = defineProps<SearchResultsProps<T>>();
@@ -31,40 +32,56 @@ const results = ref<T[]>([]);
 const isLoading = ref(false);
 
 const searchContext = useSearch();
-const { debouncedQuery, immediateQuery } = searchContext;
+const { debouncedQuery, immediateQuery } = searchContext || {};
+let currentQuery = "";
 
-const search = async (query: string) => {
+const search = async ({ query }: { query: string }) => {
   if (query.trim() && props.searchFn) {
+    currentQuery = query;
     isLoading.value = true;
     try {
       const searchResults = await props.searchFn(query);
-      results.value = Array.isArray(searchResults)
-        ? searchResults
-        : [searchResults];
-      isLoading.value = false;
+      if (currentQuery === query) {
+        results.value = Array.isArray(searchResults) ? searchResults : [];
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Search error:", error);
+      if (currentQuery === query) {
+        results.value = [];
+      }
     } finally {
-      isLoading.value = false;
+      if (currentQuery === query) {
+        isLoading.value = false;
+      }
     }
   } else {
+    currentQuery = "";
     results.value = [];
-    immediateQuery.value = "";
     isLoading.value = false;
   }
 };
 
 watch(
-  () => debouncedQuery.value,
+  () => immediateQuery?.value,
   (val) => {
-    search(val);
+    if (!Boolean(val?.trim())) {
+      results.value = [];
+      isLoading.value = false;
+    }
+  },
+  {
+    immediate: true,
+    deep: true,
   }
 );
 
 watch(
-  () => immediateQuery.value,
+  () => debouncedQuery?.value,
   (val) => {
-    if (!Boolean(val?.trim())) {
+    if (val !== undefined && val.trim()) {
+      search({ query: val });
+    } else {
+      currentQuery = "";
       results.value = [];
       isLoading.value = false;
     }
@@ -77,35 +94,31 @@ watch(
 </script>
 
 <template>
-  <template v-if="isLoading">
-    <CommandList v-bind="forwarded">
-      <div
-        v-for="index in 3"
-        :key="'skeleton-' + index"
-        class="relative flex cursor-default items-center gap-3 rounded-xl p-3 text-sm outline-hidden select-none">
+  <CommandList v-bind="forwarded">
+    <CommandGroup>
+      <template v-if="isLoading">
         <div
-          class="flex items-center justify-center size-10 rounded-lg border border-gray-200 bg-gray-100 shrink-0 animate-pulse" />
-        <div class="flex flex-col flex-1 min-w-0">
+          v-for="index in 3"
+          :key="index"
+          class="relative flex cursor-default items-center gap-3 rounded-xl p-3 text-sm outline-hidden select-none">
           <div
-            class="h-4 bg-gray-200 rounded animate-pulse mb-1.5"
-            :style="{ width: `${60 + Math.random() * 30}%` }" />
-          <div class="h-3 bg-gray-200 rounded animate-pulse w-1/3" />
+            class="flex items-center justify-center size-10 rounded-lg border border-gray-200 bg-gray-100 shrink-0 animate-pulse" />
+          <div class="flex flex-col flex-1 min-w-0">
+            <div
+              class="h-4 bg-gray-200 rounded animate-pulse mb-1.5"
+              :style="{ width: `${60 + Math.random() * 30}%` }" />
+            <div class="h-3 bg-gray-200 rounded animate-pulse w-1/3" />
+          </div>
         </div>
-      </div>
-    </CommandList>
-  </template>
-
-  <template v-else>
-    <CommandList v-bind="forwarded" v-if="results.length">
-      <CommandGroup>
+      </template>
+      <template v-else>
         <template v-for="(result, idx) in results" :key="idx">
           <slot name="result" :result="result" :item-value="idx" />
         </template>
-      </CommandGroup>
-    </CommandList>
-
-    <CommandList v-bind="forwarded" v-else>
-      <CommandEmpty>No results found.</CommandEmpty>
-    </CommandList>
-  </template>
+      </template>
+    </CommandGroup>
+    <CommandEmpty v-if="!results.length && !isLoading"
+      >No results found</CommandEmpty
+    >
+  </CommandList>
 </template>

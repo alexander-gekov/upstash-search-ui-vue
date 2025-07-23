@@ -34,15 +34,15 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
 <template>
   <div className="relative">
-    <DialogHeader className="sr-only">
-      <DialogTitle>{{ title }}</DialogTitle>
-      <DialogDescription>{{ description }}</DialogDescription>
-    </DialogHeader>
     <DialogContent
       :class="
         cn('top-24 overflow-hidden p-0 rounded-xl sm:rounded-2xl', props.class)
       "
       v-bind="forwarded">
+      <DialogHeader className="sr-only">
+        <DialogTitle>{{ title }}</DialogTitle>
+        <DialogDescription>{{ description }}</DialogDescription>
+      </DialogHeader>
       <Command
         :class="
           cn(

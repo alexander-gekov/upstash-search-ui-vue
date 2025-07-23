@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, watch, type HTMLAttributes } from "vue";
-import { reactiveOmit } from "@vueuse/core";
+import { reactiveOmit, useDebounce } from "@vueuse/core";
 import {
   type DialogContentEmits,
   type DialogContentProps,
@@ -28,18 +28,24 @@ const delegatedProps = reactiveOmit(props, "class");
 const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
 const query = ref("");
+const debouncedQuery = useDebounce(query, 300);
 const inputRef = useTemplateRef<HTMLInputElement>("inputRef");
 
-const { immediateQuery } = useSearch();
+const searchContext = useSearch();
 
-watch(query, (value) => {
-  immediateQuery.value = value;
+watch(debouncedQuery, (val) => {
+  searchContext.debouncedQuery.value = val;
+});
+
+watch(query, (val) => {
+  searchContext.immediateQuery.value = val;
 });
 
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
     query.value = "";
-    immediateQuery.value = "";
+    searchContext.immediateQuery.value = "";
+    searchContext.debouncedQuery.value = "";
   }
 };
 </script>

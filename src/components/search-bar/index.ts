@@ -7,12 +7,10 @@ import DialogContent from "./SearchContent.vue";
 import SearchInput from "./SearchInput.vue";
 import SearchResults from "./SearchResults.vue";
 import SearchResult from "./SearchResult.vue";
-// import Input from "./SearchInput.vue";
-// import Item from "./SearchItem.vue";
-// import Title from "./SearchTitle.vue";
-// import ItemContent from "./SearchItemContent.vue";
-// import Separator from "./SearchSeparator.vue";
-// import Results from "./SearchResults.vue";
+import SearchResultIcon from "./SearchResultIcon.vue";
+import SearchResultContent from "./SearchResultContent.vue";
+import SearchResultTitle from "./SearchResultTitle.vue";
+import Separator from "./Separator.vue";
 
 export default {
   install(app: App) {
@@ -22,12 +20,10 @@ export default {
     registerComponent(app, SearchInput);
     registerComponent(app, SearchResults);
     registerComponent(app, SearchResult);
-    // registerComponent(app, Input);
-    // registerComponent(app, Item);
-    // registerComponent(app, Title);
-    // registerComponent(app, ItemContent);
-    // registerComponent(app, Separator);
-    // registerComponent(app, Results);
+    registerComponent(app, SearchResultIcon);
+    registerComponent(app, SearchResultContent);
+    registerComponent(app, SearchResultTitle);
+    registerComponent(app, Separator);
   },
 } as Plugin;
 
@@ -37,9 +33,7 @@ export { DialogContent as SearchBarDialogContent };
 export { SearchInput as SearchBarInput };
 export { SearchResults as SearchBarResults };
 export { SearchResult as SearchBarResult };
-// export { Input as SearchBarInput };
-// export { Item as SearchBarResult };
-// export { Title as SearchBarResultTitle };
-// export { ItemContent as SearchBarResultContent };
-// export { Separator as SearchBarSeparator };
-// export { Results as SearchBarResults };
+export { SearchResultIcon as SearchBarResultIcon };
+export { SearchResultContent as SearchBarResultContent };
+export { SearchResultTitle as SearchBarResultTitle };
+export { Separator as SearchBarSeparator };

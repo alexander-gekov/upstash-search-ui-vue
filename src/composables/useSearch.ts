@@ -1,8 +1,7 @@
 import { ref } from "vue";
-import { useDebounce } from "@vueuse/core";
 
 const immediateQuery = ref("");
-const debouncedQuery = useDebounce(immediateQuery, 300);
+const debouncedQuery = ref("");
 
 export function useSearch() {
   return {
