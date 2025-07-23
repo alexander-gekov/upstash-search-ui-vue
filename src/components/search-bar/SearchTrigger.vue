@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import { DialogTrigger } from "../dialog";
+import type { HTMLAttributes } from "vue";
+import { type DialogTriggerProps } from "reka-ui";
+import DialogTrigger from "../../ui/dialog/DialogTrigger.vue";
 import { cn } from "../../utils";
 
-defineProps<{
+interface Props extends DialogTriggerProps {
   placeholder?: string;
-  className?: string;
-}>();
+  class?: HTMLAttributes["class"];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  placeholder: "Search...",
+});
 </script>
 
 <template>
-  <DialogTrigger asChild v-bind="$attrs">
+  <DialogTrigger v-bind="props" asChild>
     <button
       type="button"
       :class="
         cn(
           'flex items-center gap-3 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-500 transition-colors hover:border-gray-300 hover:bg-gray-50',
-          className
+          props.class
         )
       ">
       <svg
@@ -28,7 +34,7 @@ defineProps<{
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="size-4 shrink-0">
+        class="size-4 shrink-0">
         <path d="m21 21-4.34-4.34" />
         <circle cx="11" cy="11" r="8" />
       </svg>

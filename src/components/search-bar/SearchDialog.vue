@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import Dialog from "../dialog/Dialog.vue";
+import {
+  type DialogRootEmits,
+  type DialogRootProps,
+  useForwardPropsEmits,
+} from "reka-ui";
+import Dialog from "../../ui/dialog/Dialog.vue";
 
-export interface DialogProps {
-  open?: boolean;
-}
+const props = defineProps<DialogRootProps>();
+const emits = defineEmits<DialogRootEmits>();
 
-export interface DialogEmits {
-  (e: "update:open", value: boolean): void;
-}
-
-defineProps<DialogProps>();
-const emit = defineEmits<DialogEmits>();
+const forwarded = useForwardPropsEmits(props, emits);
 </script>
 
 <template>
-  <Dialog
-    :open="open"
-    @update:open="(value) => emit('update:open', value)"
-    v-bind="$attrs">
+  <Dialog v-bind="forwarded">
     <slot />
   </Dialog>
 </template>

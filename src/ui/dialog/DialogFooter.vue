@@ -2,16 +2,14 @@
 import type { HTMLAttributes } from "vue";
 import { cn } from "../../utils";
 
-const props = defineProps<{
-  class?: HTMLAttributes["class"];
-}>();
+const props = defineProps<{ class?: HTMLAttributes["class"] }>();
 </script>
 
 <template>
-  <span
+  <div
     :class="
-      cn('ml-auto text-xs tracking-widest text-muted-foreground', props.class)
+      cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', props.class)
     ">
     <slot />
-  </span>
+  </div>
 </template>

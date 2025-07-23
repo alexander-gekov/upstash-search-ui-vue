@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit } from "@vueuse/core";
-import { Search } from "lucide-vue-next";
+// import { Search } from "lucide-vue-next";
 import {
   ListboxFilter,
   type ListboxFilterProps,
   useForwardProps,
 } from "reka-ui";
 import { cn } from "../../utils";
-import { useCommand } from ".";
+import { useCommand } from "./index";
 
 defineOptions({
   inheritAttrs: false,
@@ -28,8 +28,7 @@ const { filterState } = useCommand();
 </script>
 
 <template>
-  <div class="flex items-center border-b px-3" cmdk-input-wrapper>
-    <Search class="mr-2 h-4 w-4 shrink-0 opacity-50" />
+  <div class="flex items-center" cmdk-input-wrapper>
     <ListboxFilter
       v-bind="{ ...forwardedProps, ...$attrs }"
       v-model="filterState.search"

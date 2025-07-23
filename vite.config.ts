@@ -45,6 +45,7 @@ export default defineConfig({
           "lucide-vue-next": "Lucide",
         },
         assetFileNames: "index.css",
+        exports: "named",
       },
     },
   },

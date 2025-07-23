@@ -5,5 +5,8 @@ const immediateQuery = ref("");
 const debouncedQuery = useDebounce(immediateQuery, 300);
 
 export function useSearch() {
-  return { immediateQuery, debouncedQuery };
+  return {
+    immediateQuery,
+    debouncedQuery,
+  };
 }

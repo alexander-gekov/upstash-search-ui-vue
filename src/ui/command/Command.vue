@@ -4,7 +4,7 @@ import { reactiveOmit } from "@vueuse/core";
 import { ListboxRoot, useFilter, useForwardPropsEmits } from "reka-ui";
 import { type HTMLAttributes, reactive, ref, watch } from "vue";
 import { cn } from "../../utils";
-import { provideCommandContext } from ".";
+import { provideCommandContext } from "./index";
 
 const props = withDefaults(
   defineProps<ListboxRootProps & { class?: HTMLAttributes["class"] }>(),
@@ -65,6 +65,10 @@ function filterItems() {
 
   filterState.filtered.count = itemCount;
 }
+
+// function handleSelect() {
+//   filterState.search = "";
+// }
 
 watch(
   () => filterState.search,
