@@ -20,21 +20,27 @@ A beautifully-designed, accessible search component. Built on top of [Reka UI](h
 npm install upstash-search-ui-vue
 ```
 
+### Plugin Installation
+
+### 1.1 Vue App
+
 ```typescript
-// 👇 import components and optimized styles
-import {
-  SearchBarDialog,
-  SearchBarDialogTrigger,
-  SearchBarDialogContent,
-  SearchBarInput,
-  SearchBarResults,
-  SearchBarResult,
-  SearchBarResultIcon,
-  SearchBarResultContent,
-  SearchBarResultTitle,
-} from "upstash-search-ui-vue";
+// main.ts
+import { createApp } from "vue";
+import "./style.css";
+import App from "./App.vue";
+
+// import plugin and css
+import UpstashSearchUi from "upstash-search-ui-vue";
 import "upstash-search-ui-vue/dist/index.css";
+
+// use it
+createApp(App).use(UpstashSearchUi).mount("#app");
 ```
+
+## 1.1 Nuxt Module
+
+There is no Nuxt module for this package yet. If you want to use it in a Nuxt project, you can use the plugin installation method above.
 
 ---
 
@@ -50,8 +56,10 @@ Creating a search database takes less than a minute: [get started here](https://
 npm install @upstash/search
 ```
 
-````vue
+```vue
 <script setup lang="ts">
+import { ref } from "vue";
+import { Search } from "@upstash/search";
 import {
   SearchBarDialog,
   SearchBarDialogTrigger,
@@ -59,69 +67,76 @@ import {
   SearchBarInput,
   SearchBarResults,
   SearchBarResult,
-  SearchBarResultIcon,
-  SearchBarResultContent,
   SearchBarResultTitle,
+  SearchBarResultContent,
+  SearchBarResultIcon,
+  SearchBarSeparator,
 } from "upstash-search-ui-vue";
-import "upstash-search-ui-vue/dist/index.css";
-
-import { Search } from "@upstash/search";
-import { FileText } from "lucide-vue-next";
 
 const client = new Search({
-  url: "<UPSTASH_SEARCH_URL>",
-  token: "<YOUR_SEARCH_READONLY_TOKEN>",
+  url: "UPSTASH_URL",
+  token: "UPSTASH_READ_ONLY_TOKEN",
 });
 
-// 👇 your search index name
-const index = client.index<{ title: string }>("movies");
+type Record = {
+  title: string;
+  overview: string;
+};
+
+type Metadata = {
+  poster_link: string;
+};
+
+const query = ref("");
+
+const index = client.index<Record, Metadata>("movies");
+const searchFn = async (q: string) => {
+  return index.search({ query: q, limit: 10, reranking: true });
+};
 </script>
 
 <template>
-  <SearchBarDialog>
-    <SearchBarDialogTrigger>
-      <SearchBarInput placeholder="Type to search movies..." />
-    </SearchBarDialogTrigger>
-
-    <SearchBarDialogContent>
-      <SearchBarResults
-        :searchFn="
-          (query) => index.search({ query, limit: 10, reranking: true })
-        ">
-        <template #default="{ result }">
-          <SearchBarResult :value="result.id">
-            <SearchBarResultIcon>
-              <FileText class="text-gray-600" />
-            </SearchBarResultIcon>
-
-            <SearchBarResultContent>
-              <SearchBarResultTitle>
-                {{ result.content.title }}
-              </SearchBarResultTitle>
-              <p class="text-xs text-gray-500 mt-0.5">Movie</p>
-            </SearchBarResultContent>
-          </SearchBarResult>
-        </template>
-      </SearchBarResults>
-    </SearchBarDialogContent>
-  </SearchBarDialog>
+  <main class="max-w-2xl mx-auto p-4">
+    <SearchBarDialog>
+      <SearchBarDialogTrigger :placeholder="'Type to search movies...'" />
+      <SearchBarDialogContent class="bg-white" :title="query">
+        <SearchBarInput v-model="query" placeholder="Search movies..." />
+        <SearchBarResults :searchFn="searchFn">
+          <template #result="{ result }">
+            <SearchBarResult
+              :result="result"
+              :itemValue="result.content.title"
+              class="flex justify-between">
+              <SearchBarResultIcon class="w-10 aspect-auto p-0">
+                <img
+                  :src="result.metadata?.poster_link"
+                  class="w-full rounded-md"
+                  alt="" />
+              </SearchBarResultIcon>
+              <SearchBarResultContent>
+                <SearchBarResultTitle :text="result.content.title" />
+                <div class="text-sm line-clamp-3">
+                  {{ result.content.overview }}
+                </div>
+              </SearchBarResultContent>
+            </SearchBarResult>
+            <SearchBarSeparator />
+          </template>
+        </SearchBarResults>
+      </SearchBarDialogContent>
+    </SearchBarDialog>
+  </main>
 </template>
+```
 
-## Customization This component is beautifully pre-styled, but 100%
-customizable. You can change every piece of it yourself by passing normal props
-to each component (such as `class`). **For example**: If you wanted to change
-the primary color, change the CSS classes: ```vue
-<SearchBarInput
-  class="focus:ring-red-500"
-  placeholder="Type to search movies..." />
+## Customization
 
+This component is beautifully pre-styled, but 100% customizable. You can change every piece of it yourself by passing normal props to each component (such as `class`). **For example**: If you wanted to change the primary color, change the CSS classes:
+
+```vue
 <SearchBarResultTitle
   class="font-medium text-gray-900"
-  highlightClass="decoration-red-500 text-red-500">
-  {{ result.content.title }}
+  highlightClass="decoration-red-500 text-red-500"
+  :text="result.content.title">
 </SearchBarResultTitle>
-````
-
----
-
-This component is based on the [Reka UI Dialog Primitive](https://reka-ui.com/docs/components/dialog).
+```
