@@ -1,6 +1,10 @@
 # Upstash Search UI (Vue port)
 
+This library is inspired by [@upstash/search-ui](https://github.com/upstash/search-ui). Props to their team for building it.
+
 A beautifully-designed, accessible search component. Built on top of [Reka UI](https://reka-ui.com/)
+
+<img width="895" height="536" alt="showcase" src="https://github.com/user-attachments/assets/da828272-ea9d-4f9c-872d-943f4d6a5efe" />
 
 ---
 
@@ -48,7 +52,7 @@ There is no Nuxt module for this package yet. If you want to use it in a Nuxt pr
 
 Our search component is designed to be **provider agnostic**.
 
-In the code below we're using [Upstash Search](https://upstash.com/docs/search/overall/whatisupstashsearch) - our solution for fast, reliable and highly scalable serverless search.
+In the code below we're using [Upstash Search](https://upstash.com/docs/search/overall/whatisupstashsearch) - Upstash's solution for fast, reliable and highly scalable serverless search.
 
 Creating a search database takes less than a minute: [get started here](https://upstash.com/docs/search/overall/getstarted). To follow along with Upstash Search, install the package:
 
