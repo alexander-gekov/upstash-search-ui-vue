@@ -42,7 +42,7 @@ import "upstash-search-ui-vue/dist/index.css";
 createApp(App).use(UpstashSearchUi).mount("#app");
 ```
 
-## 1.1 Nuxt Module
+### 1.2 Nuxt Module
 
 There is no Nuxt module for this package yet. If you want to use it in a Nuxt project, you can use the plugin installation method above.
 
